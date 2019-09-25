@@ -5,8 +5,8 @@ import xbot.config as config
 
 elb_name = config.elb_name
 s3_bucket_name = config.s3_bucket_name
-account_id = config.account_id
-access_key = config.access_key
+account_id = config.AWSAccessKey
+access_key = config.AWSSecretKey
 
 # Logging emit interval is set in minutes and is either 5 or 60 minutes
 LOGGING_EMIT_INTERVAL = 5

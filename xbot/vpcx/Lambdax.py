@@ -5,7 +5,11 @@ import ast
 import random
 from xbot import config
 
-client = boto3.client('lambda')
+client = boto3.client('lambda',
+                      'us-east-2',
+                      aws_access_key_id=config.AWSAccessKey,
+                      aws_secret_access_key=config.AWSSecretKey
+                      )
 
 
 def list_functions():
@@ -255,40 +259,3 @@ def delete_all_function():
             )
     # pprint.pprint(lambda_fns)
 
-
-def permissions_are_not_cross_account():
-    """
-    Assures that any lambda function, version does not have cross-account permissions (policies).
-    Currently, these can only be added through the CLI.
-    """
-    # For any functions with cross account permissions, store the
-    # function name as the key and list of statement IDs as the value.
-    cross_functions = {}
-    FunctionName = 'Sheep4'
-    versions = list_versions(FunctionName)
-    # Need to check for this function and its aliases and versions,
-    # as each one have their own permissions.
-    policy_statements = get_policy(FunctionName)
-    # pprint.pprint(policy_statements)
-    cross_account_permissions = (list_cross_account_permission_sids(policy_statements))
-    # pprint.pprint(cross_account_permissions)
-    if cross_account_permissions:
-        cross_functions[FunctionName] = cross_account_permissions
-    # pprint.pprint(cross_functions)
-
-    # Build a list of qualifiers (versions) to get policies for.
-    qualifiers = versions.keys()
-    pprint.pprint(qualifiers)
-    for qualifier in qualifiers:
-        if qualifier != '$LATEST':
-            print(qualifier)
-            policy_statements = get_policy(FunctionName, qualifier)
-            pprint.pprint(policy_statements)
-            # cross_account_permissions = (
-            #     list_cross_account_permission_sids(policy_statements))
-            #
-            # if cross_account_permissions:
-            #     qualified_name = FunctionName + ":" + qualifier
-            #     # Add qualifier to function name before storing
-            #     cross_functions[qualified_name] = cross_account_permissions
-    # pprint.pprint(cross_functions)
