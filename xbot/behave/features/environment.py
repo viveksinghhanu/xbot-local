@@ -4,6 +4,7 @@ import boto3
 import pprint
 import os
 import random
+import time
 import boto
 import boto.ec2.elb
 import boto.ec2.elb.attributes
@@ -87,13 +88,237 @@ def lambda_function(context):
         FunctionName=context.FunctionName,
     )
 
+#======================================================= Amazon Aurora Fixtures ====================================================
+
+#Creating a client for accessing Amazon Aurora using boto3 sdk
+aurora_client  = boto3.client('rds')
+
+@fixture
+def aurora_mysql_cluster_parameter_group(context):
+    response = aurora_client.create_db_cluster_parameter_group(
+        DBClusterParameterGroupName='aurora-mysql-cluster-parameter-group',
+        DBParameterGroupFamily='aurora5.6',
+        Description='Aurora MySQL DB CLuster parameter group',
+    )
+    yield
+    response = aurora_client.delete_db_cluster_parameter_group(
+        DBClusterParameterGroupName='aurora-mysql-cluster-parameter-group'
+    )
+
+
+@fixture
+def aurora_postgres_cluster_parameter_group(context):
+    response = aurora_client.create_db_cluster_parameter_group(
+        DBClusterParameterGroupName='aurora-postgres-cluster-parameter-group',
+        DBParameterGroupFamily='aurora5.6',
+        Description='Aurora MySQL DB CLuster parameter group',
+    )
+    yield
+    response = aurora_client.delete_db_cluster_parameter_group(
+        DBClusterParameterGroupName='aurora-postgres-cluster-parameter-group'
+    )
+
+
+@fixture
+def aurora_mysql_cluster(context):
+    response = aurora_client.create_db_cluster(
+        AvailabilityZones=[
+            'us-east-1a',
+        ],
+        DBClusterIdentifier='aurora-mysql-cluster',
+        DBClusterParameterGroupName='aurora-mysql-cluster-parameter-group',
+        DatabaseName='aurora-mysql-db',
+        Engine='aurora',
+        EngineVersion='5.6.10a',
+        MasterUserPassword='admin123',
+        MasterUsername='admin',
+        Port=3306,
+        StorageEncrypted=True,
+        EnableCloudwatchLogsExports=[
+            'error'
+        ]
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            cluster_response = aurora_client.describe_db_clusters(
+                DBClusterIdentifier='aurora-mysql-cluster',
+            )
+            for cluster in cluster_response['DBClusters']:
+                if cluster['Status'] == 'creating':
+                    time.sleep(5)
+                elif cluster['Status'] == 'available':
+                    sleep_mode = False
+        except Exception:
+            sleep_mode = False
+    yield
+    response = aurora_client.delete_db_cluster(
+        DBClusterIdentifier='aurora-mysql-cluster',
+        SkipFinalSnapshot=True,
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            cluster_response = aurora_client.describe_db_clusters(
+                DBClusterIdentifier='aurora-mysql-cluster',
+            )
+            if cluster_response:
+                time.sleep(5)
+            else:
+                sleep_mode = False
+        except Exception:
+            sleep_mode = False
+
+
+@fixture
+def aurora_postgres_cluster(context):
+    print('aurora_cluster is being created...')
+    response = aurora_client.create_db_cluster(
+        AvailabilityZones=[
+            'us-east-1a',
+        ],
+        DBClusterIdentifier='aurora-postgres-cluster',
+        DBClusterParameterGroupName='aurora-postgres-cluster-parameter-group',
+        DatabaseName='aurora-postgres-db',
+        Engine='aurora',
+        EngineVersion='5.6.10a',
+        MasterUserPassword='admin123',
+        MasterUsername='admin',
+        Port=3306,
+        StorageEncrypted=True,
+        EnableCloudwatchLogsExports=[
+            'error'
+        ]
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            cluster_response = aurora_client.describe_db_clusters(
+                DBClusterIdentifier='aurora-postgres-cluster',
+            )
+            for cluster in cluster_response['DBClusters']:
+                if cluster['Status'] == 'creating':
+                    time.sleep(5)
+                elif cluster['Status'] == 'available':
+                    sleep_mode = False
+        except Exception:
+            sleep_mode = False
+    yield
+    response = aurora_client.delete_db_cluster(
+        DBClusterIdentifier='aurora-postgres-cluster',
+        SkipFinalSnapshot=True,
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            cluster_response = aurora_client.describe_db_clusters(
+                DBClusterIdentifier='aurora-postgres-cluster',
+            )
+            if cluster_response:
+                time.sleep(5)
+            else:
+                sleep_mode = False
+        except Exception:
+            sleep_mode = False
+
+
+@fixture
+def aurora_mysql_db_instance(context):
+    print('Database Instance is being created...')
+    response = aurora_client.create_db_instance(
+        DBInstanceIdentifier='aurora-mysql-db-id',
+        DBInstanceClass='db.r4.large',
+        Engine='aurora',
+        DBClusterIdentifier='aurora-mysql-cluster',
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            instance_response = aurora_client.describe_db_instances(
+                DBInstanceIdentifier='aurora-mysql-db-id',
+            )
+            for instance in instance_response['DBInstances']:
+                if instance['DBInstanceStatus'] == 'creating':
+                    time.sleep(10)
+                elif instance['DBInstanceStatus'] == 'available':
+                    sleep_mode = False
+        except Exception:
+            return False
+    yield
+    response = aurora_client.delete_db_instance(
+        DBInstanceIdentifier='aurora-mysql-db-id',
+        SkipFinalSnapshot=True,
+        DeleteAutomatedBackups=True
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            instance_response = aurora_client.describe_db_instances(
+                DBInstanceIdentifier='aurora-mysql-db-id',
+            )
+            if instance_response:
+                time.sleep(5)
+            else:
+                sleep_mode = False
+        except Exception:
+            sleep_mode = False
+
+
+@fixture
+def aurora_postgres_db_instance(context):
+    print('Database Instance is being created...')
+    response = aurora_client.create_db_instance(
+        DBInstanceIdentifier='aurora-postgres-db-id',
+        DBInstanceClass='db.r4.large',
+        Engine='aurora',
+        DBClusterIdentifier='aurora-postgres-cluster',
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            instance_response = aurora_client.describe_db_instances(
+                DBInstanceIdentifier='aurora-postgres-db-id',
+            )
+            for instance in instance_response['DBInstances']:
+                if instance['DBInstanceStatus'] == 'creating':
+                    time.sleep(10)
+                elif instance['DBInstanceStatus'] == 'available':
+                    sleep_mode = False
+        except Exception:
+            return False
+    yield
+    response = aurora_client.delete_db_instance(
+        DBInstanceIdentifier='aurora-postgres-db-id',
+        SkipFinalSnapshot=True,
+        DeleteAutomatedBackups=True
+    )
+    sleep_mode = True
+    while sleep_mode:
+        try:
+            instance_response = aurora_client.describe_db_instances(
+                DBInstanceIdentifier='aurora-postgres-db-id',
+            )
+            if instance_response:
+                time.sleep(5)
+            else:
+                sleep_mode = False
+        except Exception:
+            sleep_mode = False
+
+#=======================================================================================================================================
 
 fixture_registry = {
     "fixture.elastic_load_balancer": elastic_load_balancer,
     "fixture.s3_bucket": s3_bucket,
-    "fixture.lambda_function": lambda_function
-}
+    "fixture.lambda_function": lambda_function,
+    "fixture.aurora_mysql_cluster_parameter_group" : aurora_mysql_cluster_parameter_group,
+    "fixture.aurora_postgres_cluster_parameter_group" : aurora_postgres_cluster_parameter_group,
+    "fixture.aurora_mysql_cluster" : aurora_mysql_cluster,
+    "fixture.aurora_postgres_cluster" : aurora_postgres_cluster,
+    "fixture.aurora_mysql_db_instance" : aurora_mysql_db_instance,
+    "fixture.aurora_postgres_db_instance" : aurora_postgres_db_instance
 
+}
 
 def before_tag(context, tag):
     if tag.startswith("fixture."):
