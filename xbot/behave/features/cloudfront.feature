@@ -17,8 +17,8 @@
 
   
 Feature:GxP CloudFront
-Scenario: The CloudFront distribution TTL time is configured to be greater than VPCx min TTL 
-   Given The distribution has minimum TTL greater to VPCx min ttl
+Scenario: Enforce CloudFront distribution min TTL to be equal to VPCx min TTL by enforcement test
+   Given The distribution has minimum TTL greater than VPCx min ttl
    # retrieve the CloudFront distribution configuration from cloud
 
    And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
