@@ -1,10 +1,15 @@
+from xbot import config
+from behave.fixture import use_fixture_by_tag
+import boto3
+import pprint
+import os
+import random
 import boto
 import boto.ec2.elb
 import boto.ec2.elb.attributes
 import boto.ec2.elb.loadbalancer
 import boto.s3.connection
 import boto.s3.bucket
-import xbot.config as config
 from behave import fixture
 from behave.fixture import use_fixture_by_tag
 
@@ -17,6 +22,7 @@ def before_all(context):
     context.elb_listeners = config.elb_listeners
     context.s3_bucket_name = config.s3_bucket_name
     context.bucket_policy = config.bucket_policy
+    context.FunctionName = config.FunctionName
 
 
 @fixture
@@ -44,9 +50,44 @@ def s3_bucket(context):
     print(f'Deleted S3 Bucket by the name {context.s3_bucket_name}')
 
 
+
+@fixture
+def lambda_function(context):
+    context.FunctionName = config.FunctionName
+    client = boto3.client('lambda')
+    with open(r'xbot\behave\features\code.zip', 'rb') as f:
+        zipped_code = f.read()
+    response = client.create_function(
+        FunctionName=context.FunctionName,
+        Runtime='python3.7',
+        Role='arn:aws:iam::360752793804:role/LambdaRole',
+        Code=dict(ZipFile=zipped_code),
+        Handler='lambda_function.lambda_handler',
+        Description='Some Description',
+        Timeout=123,
+        MemorySize=200,
+        Publish=True
+    )
+    pprint.pprint(response)
+    context.lambda_function_id = response['FunctionArn'] +':'+ response['Version']
+
+    Cross_Account_cmd = f'aws lambda add-permission --function-name {context.lambda_function_id} ' \
+        f'--action lambda:InvokeFunction --statement-id s3-account{random.randint(2, 100)} --principal ' \
+        's3.amazonaws.com --source-arn arn:aws:s3:::amoddemobucket --source-account 420752799804 ' \
+        '--output text'
+    os.system(Cross_Account_cmd)
+    print('Lambda Function Arn :', context.lambda_function_id)
+    context.lambda_function_id = response['FunctionArn']
+
+    yield
+    client.delete_function(
+        FunctionName=context.FunctionName,
+    )
+
 fixture_registry = {
     "fixture.elastic_load_balancer": elastic_load_balancer,
-    "fixture.s3_bucket": s3_bucket
+    "fixture.s3_bucket": s3_bucket,
+    "fixture.lambda_function": lambda_function
 }
 
 

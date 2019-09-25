@@ -1,7 +1,9 @@
-elb_name = 'TestFinal'
-account_id = 'AKIAVA2LEYH5KHFIV7GZ'
-access_key = 'v5AVnFpADk4TbU0/GKf+Uf2fc+6GOKjU9unWVBzJ'
+elb_name = 'Demo'
+AWSAccessKey = '#'
+AWSSecretKey = '#'
+account_id = '123452793804'
 elb_zones = ['us-east-1a', 'us-east-1b']
 elb_listeners = [[80, 90, 'HTTP']]
-s3_bucket_name = 'kunwarelbbucket'
+s3_bucket_name = 'Demobbucket'
 bucket_policy = 'public-read-write'
+FunctionName = 'DemoTest'
