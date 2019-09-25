@@ -1,5 +1,5 @@
-@fixture.elb
-@fixture.s3
+@fixture.elastic_load_balancer
+@fixture.s3_bucket
 
 Feature: Gxp ELB
   Scenario: Enforce to enable cross zone for elastic load balancer by enforcement test
