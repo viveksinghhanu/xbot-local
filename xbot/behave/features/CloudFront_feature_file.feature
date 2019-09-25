@@ -17,13 +17,13 @@
   
 Feature:GxP CloudFront
 Scenario: Minimum TTL of CloudFront distribution less than or equal to VPCx min TTL 
-	Given The distribution has minimum TTL less than or equal to VPCx min ttl
-	# retrieve the CloudFront distribution configuration from cloud
+   Given The distribution has minimum TTL less than or equal to VPCx min ttl
+   # retrieve the CloudFront distribution configuration from cloud
 
-	 And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
-	# context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
+   And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
+   # context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
 
-    When Enforcement Test "xbot.vpcx.assurance.projectdistribution.ProjectDistributionEnforcementTest.test_cloudfrontx_distribution_min_ttl_is_valid" runs
+   When Enforcement Test "xbot.vpcx.assurance.projectdistribution.ProjectDistributionEnforcementTest.test_cloudfrontx_distribution_min_ttl_is_valid" runs
     # execute the configured enforcement test CLI and makes sure it exits successfully
     # context.enforcement_test_output = <the output of the enforcement test CLI>
    
@@ -34,11 +34,11 @@ Scenario: Minimum TTL of CloudFront distribution less than or equal to VPCx min 
 	
 	
 Scenario: Minimum TTL of CloudFront distribution equal to VPCx min TTL 
-	Given The distribution has minimum TTL equal to VPCx min ttl
-	# retrieve the CloudFront distribution configuration from cloud
+    Given The distribution has minimum TTL equal to VPCx min ttl
+    # retrieve the CloudFront distribution configuration from cloud
 
-	 And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
-	# context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
+    And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
+    # context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
 
     When Enforcement Test "xbot.vpcx.assurance.projectdistribution.ProjectDistributionEnforcementTest.test_cloudfrontx_distribution_min_ttl_is_valid" runs
     # execute the configured enforcement test CLI and makes sure it exits successfully
@@ -47,39 +47,38 @@ Scenario: Minimum TTL of CloudFront distribution equal to VPCx min TTL
     Then Enforcement Test "xbot.vpcx.assurance.projectdistribution.ProjectDistributionEnforcementTest.test_cloudfrontx_distribution_min_ttl_is_valid" responds with a status of "No action taken"
     # assert "No action taken" in context.enforcement_test_output
 
-     And No change in min TTL takes place
-	#   retrieve the CloudFront distribution configuration from cloud
+    And No change in min TTL takes place
+    #   retrieve the CloudFront distribution configuration from cloud
     #   if minimum TTL of CloudFront distribution is equal to VPCx min TTL
     #      success
 	 
 	 
 Scenario: Logging bucket of CloudFront distribution is configured to not have the valid VPCx logging bucket
-	Given The logging bucket of CloudFront distribution is not the valid VPCx logging bucket
-	# retrieve the CloudFront distribution configuration from cloud
+    Given The logging bucket of CloudFront distribution is not the valid VPCx logging bucket
+    # retrieve the CloudFront distribution configuration from cloud
 
-	 And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
-	# context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
+    And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
+    # context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
 
     When Enforcement Test "xbot.vpcx.assurance.projectdistribution.ProjectDistributionEnforcementTest.test_cloudfrontx_distribution_logging_bucket_is_valid" runs
     # execute the configured enforcement test CLI and makes sure it exits successfully
     # context.enforcement_test_output = <the output of the enforcement test CLI>
    
-
     Then Logging is enabled in CloudFront distribution
     #  enable logging before enforcing VPCx logging bucket 
    
-   And Logging bucket of CloudFront distribution is updated to VPCx logging bucket
+    And Logging bucket of CloudFront distribution is updated to VPCx logging bucket
     #   retrieve the CloudFront distribution configuration from cloud
     #   if logging bucket of CloudFront distribution is updated to VPCx logging bucket
     #      success
 	
 	
 Scenario: Logging bucket of CloudFront distribution is configured to have the valid VPCx logging bucket
-	Given Logging bucket of CloudFront distribution is VPCx logging bucket
-	# retrieve the CloudFront distribution configuration from cloud
+    Given Logging bucket of CloudFront distribution is VPCx logging bucket
+    # retrieve the CloudFront distribution configuration from cloud
 
-	 And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
-	# context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
+    And Resource with resource id in context attribute "cloudfront_distribution_id" is set as target of enforcement test
+    # context.target_of_enforcement_test_resource_id = context.cloudfront_distribution_id
 
     When Enforcement Test "xbot.vpcx.assurance.projectdistribution.ProjectDistributionEnforcementTest.test_cloudfrontx_distribution_logging_bucket_is_valid" runs
     # execute the configured enforcement test CLI and makes sure it exits successfully
@@ -89,7 +88,7 @@ Scenario: Logging bucket of CloudFront distribution is configured to have the va
     # assert "No action taken" in context.enforcement_test_output
 
     And No change in logging bucket takes place
-	#   retrieve the CloudFront distribution configuration from cloud
+    #   retrieve the CloudFront distribution configuration from cloud
     #   if logging bucket of CloudFront distribution is VPCx logging bucket
     #      success
 	 
