@@ -1,10 +1,6 @@
 # BEFORE_ALL
   # setup xbot credentials from .json settings file
   # context.target_account = <target account for test resources from .json settings file>
-#@fixture.resource_group
-  # create resource group in context.target_account
-  # AWAIT resource group deployment
-  # context.resource_group_id = <id of the newly created resource group>
 @fixture.lambda_function
   # create a lambda function resource within the resource group pointed at by context.resource_group_id
   # AWAIT lambda function deployment

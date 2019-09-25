@@ -16,8 +16,8 @@ from behave.fixture import use_fixture_by_tag
 
 def before_all(context):
     context.elb_name = config.elb_name
-    context.account_id = config.account_id
-    context.access_key = config.access_key
+    context.account_id = config.AWSAccessKey
+    context.access_key = config.AWSSecretKey
     context.elb_zones = config.elb_zones
     context.elb_listeners = config.elb_listeners
     context.s3_bucket_name = config.s3_bucket_name
@@ -50,11 +50,14 @@ def s3_bucket(context):
     print(f'Deleted S3 Bucket by the name {context.s3_bucket_name}')
 
 
-
 @fixture
 def lambda_function(context):
     context.FunctionName = config.FunctionName
-    client = boto3.client('lambda')
+    client = boto3.client('lambda',
+                          'us-east-2',
+                          aws_access_key_id=config.AWSAccessKey,
+                          aws_secret_access_key=config.AWSSecretKey
+                          )
     with open(r'xbot\behave\features\code.zip', 'rb') as f:
         zipped_code = f.read()
     response = client.create_function(
@@ -69,7 +72,7 @@ def lambda_function(context):
         Publish=True
     )
     pprint.pprint(response)
-    context.lambda_function_id = response['FunctionArn'] +':'+ response['Version']
+    context.lambda_function_id = response['FunctionArn'] + ':' + response['Version']
 
     Cross_Account_cmd = f'aws lambda add-permission --function-name {context.lambda_function_id} ' \
         f'--action lambda:InvokeFunction --statement-id s3-account{random.randint(2, 100)} --principal ' \
@@ -83,6 +86,7 @@ def lambda_function(context):
     client.delete_function(
         FunctionName=context.FunctionName,
     )
+
 
 fixture_registry = {
     "fixture.elastic_load_balancer": elastic_load_balancer,

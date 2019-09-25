@@ -47,7 +47,9 @@ def step_impl(context):
 
 @given(u'The lambda function is configured to have "3" versions')
 def step_impl(context):
-    update_lambda_function_and_add_cross_account_permissions(context.lambda_function_id)*3
+    update_lambda_function_and_add_cross_account_permissions(context.lambda_function_id)
+    update_lambda_function_and_add_cross_account_permissions(context.lambda_function_id)
+    update_lambda_function_and_add_cross_account_permissions(context.lambda_function_id)
     response = list_versions(context.lambda_function_id)
     for key, value in response.items():
         if key != '$LATEST':

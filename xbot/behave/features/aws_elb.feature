@@ -1,6 +1,3 @@
-
-#@fixture.resource_group
-
 @fixture.elb
 @fixture.s3
 
