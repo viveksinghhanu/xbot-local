@@ -54,7 +54,6 @@ def s3_bucket(context):
 def lambda_function(context):
     context.FunctionName = config.FunctionName
     client = boto3.client('lambda',
-                          'us-east-2',
                           aws_access_key_id=config.AWSAccessKey,
                           aws_secret_access_key=config.AWSSecretKey
                           )
@@ -63,7 +62,7 @@ def lambda_function(context):
     response = client.create_function(
         FunctionName=context.FunctionName,
         Runtime='python3.7',
-        Role='arn:aws:iam::360752793804:role/LambdaRole',
+        Role=f'arn:aws:iam::{config.account_id}:role/mypolicyrole',
         Code=dict(ZipFile=zipped_code),
         Handler='lambda_function.lambda_handler',
         Description='Some Description',
@@ -76,7 +75,7 @@ def lambda_function(context):
 
     Cross_Account_cmd = f'aws lambda add-permission --function-name {context.lambda_function_id} ' \
         f'--action lambda:InvokeFunction --statement-id s3-account{random.randint(2, 100)} --principal ' \
-        's3.amazonaws.com --source-arn arn:aws:s3:::amoddemobucket --source-account 420752799804 ' \
+        's3.amazonaws.com --source-arn arn:aws:s3:::kunwardemo --source-account 420752799804 ' \
         '--output text'
     os.system(Cross_Account_cmd)
     print('Lambda Function Arn :', context.lambda_function_id)
