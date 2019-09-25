@@ -10,7 +10,7 @@
  
  
 @fixture.CloudFront
-# create a CloudFront distribution with the above create dS3 bucket as origin
+# create a CloudFront distribution with the above created S3 bucket as origin
   # AWAIT CloudFront deployment
   # context.cloudfront_distribution_id = <id of the newly created cloudfront distribution> 
 
@@ -53,7 +53,7 @@ Scenario: The CloudFront distribution TTL time is configured to be less than or 
     #      success
 	 
 	 
-Scenario: Logging bucket of CloudFront distribution is configured to not have the valid VPCx logging bucket
+Scenario: CloudFront configured with invalid logging bucket remediated by enforcement test
     Given The logging bucket of CloudFront distribution is not the valid VPCx logging bucket
     # retrieve the CloudFront distribution configuration from cloud
 
@@ -73,7 +73,7 @@ Scenario: Logging bucket of CloudFront distribution is configured to not have th
     #      success
 	
 	
-Scenario: Logging bucket of CloudFront distribution is configured to have the valid VPCx logging bucket
+Scenario: CloudFront configured with valid VPCx logging bucket
     Given Logging bucket of CloudFront distribution is VPCx logging bucket
     # retrieve the CloudFront distribution configuration from cloud
 
