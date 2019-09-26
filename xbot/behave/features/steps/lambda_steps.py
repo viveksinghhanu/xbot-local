@@ -68,15 +68,10 @@ def step_impl(context):
     # TODO: Check the execution of above by checking cross account permissions of each version of function.
 
 
-@given(u'Resource with resource id in context attribute "lambda_function_id" is set as target of enforcement test')
-def step_impl(context):
-    pass
-    # TODO: Check the context attribute and how to implement this.
-
-
-@when('Enforcement Test "xbot.vpcx.assurance.projectlambdafunction.ProjectRegionFunctionEnforcementTest.test_permissions_are_not_cross_account" runs')
-def step_impl(context):
-    os.system(r'python -m unittest xbot.vpcx.assurance.projectlambdafunction.ProjectRegionFunctionEnforcementTest.test_permissions_are_not_cross_account')
+# @given(u'Resource with resource id in context attribute "lambda_function_id" is set as target of enforcement test')
+# def step_impl(context):
+#     pass
+#     # TODO: Check the context attribute and how to implement this.
 
 
 @then(u'No version of the lambda function has any cross account permissions')

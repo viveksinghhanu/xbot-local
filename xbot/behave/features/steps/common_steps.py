@@ -1,20 +1,30 @@
-# from behave import given, when, then
-# from os import system
-# from xbot.behave import util
-# import xbot.config as config
-# from xbot.vpcx.assurance.projectregionelb import ProjectRegionElbEnforcementTest
-#
-#
-# @when('enforcement test "{enf_test_class_method}" runs')
-# def step_impl(context, enf_test_class_method):
-#     system(r'python -m unittest ' + enf_test_class_method)
-#
-#
-# # @then('enforcement test "{enf_test_class_method}" takes no action')
-# # def step_impl(context, enf_test_class_method):
-# #     test_class_instance, method_name = (util.get_class_instance_and_method_name_from_full_method_path(enf_test_class_method))
-# #     assert system(r'python -m unittest ' + enf_test_class_method) == 0
-#
-# @then('Enforcement Test responds with a status of "No action taken"')
-# def step_impl(context, enf_test_class_method):
-#     pass
+"""
+
+Some common steps to be reused between various BDD steps, like running
+enforcement tests, etc.
+
+"""
+
+from behave import given, when, then
+from os import system
+
+
+@given('Resource with resource id in context attribute "{attr_name}" is set as target of enforcement test')
+def step_impl(context, attr_name):
+    context.targetOfEnforcement = attr_name
+    print('Printing Attribute name' + context.targetOfEnforcement)
+
+
+@when('enforcement test "{enf_test_class_method}" runs')
+def step_impl(context, enf_test_class_method):
+    out = system(r'python -m unittest ' + enf_test_class_method)
+    context.out = out
+    context.enf_test_class_method = enf_test_class_method
+    context.dict = {context.enf_test_class_method: context.out}
+
+
+@then('enforcement Test responds with a status of "No action taken"')
+def step_impl(context):
+    assert context.out == context.dict[context.enf_test_class_method]
+
+

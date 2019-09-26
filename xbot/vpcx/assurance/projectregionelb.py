@@ -17,8 +17,8 @@ import xbot.config as config
 
 class ProjectRegionElbEnforcementTest(ParametrizedTestCase):
     def setUp(self):
-        self.account_id = config.account_id
-        self.access_key = config.access_key
+        self.account_id = config.AWSAccessKey
+        self.access_key = config.AWSSecretKey
         self.elb_name = config.elb_name
         self.elbs = elb.get_elbs(self.account_id, self.access_key)
         self.elb = self.elbs.get(self.elb_name)
