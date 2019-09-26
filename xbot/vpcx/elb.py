@@ -1,3 +1,4 @@
+import boto3
 import boto.ec2.elb
 import boto.ec2.elb.attributes
 import boto.ec2.elb.loadbalancer
@@ -116,3 +117,12 @@ def enable_cross_zone(account_id, access_key, elb):
         print(f'Could not enable cross-zone load balancing for elastic load balancer {elb} in project {account_id}')
         print('Inside cross zone False')
         return False
+
+
+def describe_load_balancers(account_id, access_key, elb_name):
+    conn = boto.connect_elb(account_id, access_key)
+    # Need to call get_all_lb_attributes, not get_lb_attribute as
+    # get_lb_attribute only can return crossZoneLoadBalancing, not accessLog
+    lb_attributes = conn.get_all_lb_attributes(elb_name)
+    # Access log is not always set if logging is disabled
+    print(lb_attributes)

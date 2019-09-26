@@ -259,3 +259,35 @@ def delete_all_function():
             )
     # pprint.pprint(lambda_fns)
 
+
+# def lambda_function():
+#     FunctionName = "Al"
+#     with open(r'.\code.zip', 'rb') as f:
+#         zipped_code = f.read()
+#     response = client.create_function(
+#         FunctionName=FunctionName,
+#         Runtime='python3.7',
+#         Role='arn:aws:iam::345365594618:role/mypolicyrole',
+#         Code=dict(ZipFile=zipped_code),
+#         Handler='lambda_function.lambda_handler',
+#         Description='Some Description',
+#         Timeout=123,
+#         MemorySize=200,
+#         Publish=True
+#     )
+#     pprint.pprint(response)
+#     lambda_function_id = response['FunctionArn'] + ':' + response['Version']
+#     lambda_function_name = response['FunctionName']
+#     return lambda_function_name
+#
+#
+# os.environ["AWS_ACCESS_KEY_ID"] = config.AWSAccessKey
+# os.environ["AWS_SECRET_ACCESS_KEY"] = config.AWSSecretKey
+# response = list_versions(lambda_function())
+# for key, value in response.items():
+#     if key != '$LATEST':
+#         Cross_Account_cmd = f"aws lambda add-permission --region us-east-2 --function-name {value['FunctionArn']} " \
+#             f'--action lambda:InvokeFunction --statement-id s3-account{random.randint(1, 100)} --principal ' \
+#             's3.amazonaws.com --source-arn arn:aws:s3:::sexybucketchickamod --source-account 420752799804 ' \
+#             '--output text'
+#         os.system(Cross_Account_cmd)

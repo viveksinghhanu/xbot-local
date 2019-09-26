@@ -94,6 +94,10 @@ def step_impl(context):
 def step_impl(context):
     pass
     # TODO: Again Run list cross account permission command
+# @given(u'Resource with resource id in context attribute "lambda_function_id" is set as target of enforcement test')
+# def step_impl(context):
+#     pass
+#     # TODO: Check the context attribute and how to implement this.
 
 
 @then(u'No version of the lambda function has any cross account permissions')
