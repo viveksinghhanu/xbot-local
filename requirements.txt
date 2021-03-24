@@ -13,7 +13,7 @@ parse-type==0.5.2
 pyasn1==0.4.7
 python-dateutil==2.8.0
 PyYAML==5.1.2
-rsa==3.4.2
+rsa==4.1
 s3transfer==0.2.1
 six==1.12.0
 traceback2==1.4.0
